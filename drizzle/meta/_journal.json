@@ -8,6 +8,20 @@
       "when": 1772729774976,
       "tag": "0000_damp_namorita",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1772811937921,
+      "tag": "0001_clear_vargas",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1772812456342,
+      "tag": "0002_lame_rafael_vega",
+      "breakpoints": true
     }
   ]
 }
