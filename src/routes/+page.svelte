@@ -3,19 +3,27 @@
 	import type { PageServerData, ActionData } from './$types';
 
 	let { data, form }: { data: PageServerData; form: ActionData } = $props();
+	let title = $state('');
 </script>
 
 <h1>Watchlist</h1>
 
-<form method="post" action="?/addMovie" use:enhance>
+<form method="post" action="?/addMovie" use:enhance={() => {
+	return async ({ result, update }) => {
+		await update();
+		if (result.type === 'success' || result.type === 'redirect') {
+			title = '';
+		}
+	};
+}}>
 	<label>
 		Title
-		<input type="text" name="title" required />
+		<input type="text" name="title" bind:value={title} required />
 	</label>
 	<button>Add movie</button>
 </form>
 {#if form?.message}
-	<p style="color: red">{form.message}</p>
+	<p class="error">{form.message}</p>
 {/if}
 
 <ul>
