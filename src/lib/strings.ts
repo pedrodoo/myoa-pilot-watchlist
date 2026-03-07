@@ -7,6 +7,7 @@ export const strings = {
 	   App
 	   ----------------------------------------------------------------------- */
 	appTitle: 'Watchlist-O',
+	appTagline: "Track movies you want to watch. Don't forget the popcorn.",
 
 	/* -----------------------------------------------------------------------
 	   Theme

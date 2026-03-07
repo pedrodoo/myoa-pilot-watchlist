@@ -40,12 +40,15 @@
 </svelte:head>
 
 <header class="header">
-	<h1 class="header-title">
-		<a href="/">
-			<Popcorn size={24} />
-			{strings.appTitle}
-		</a>
-	</h1>
+	<div class="header-brand">
+		<h1 class="header-title">
+			<a href="/">
+				<Popcorn size={24} />
+				{strings.appTitle}
+			</a>
+		</h1>
+		<span class="header-tagline">{strings.appTagline}</span>
+	</div>
 	<div class="header-nav">
 		<button
 			type="button"

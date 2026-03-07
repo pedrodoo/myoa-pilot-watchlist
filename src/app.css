@@ -4,19 +4,50 @@
 
 :root {
 	/* ----------------------------------------------------------------------
-	   Color — Semantic palette. Theme blocks override these per light/dark.
+	   Base palette — Raw colors. Change these to shift the whole theme.
+	   Semantic colors below reference these.
+	   Warm neutrals (light theme): off-white, cream, taupe.
 	   ---------------------------------------------------------------------- */
-	--color-bg: #f8f8f8;
-	--color-text: #1a1a1a;
-	--color-text-muted: #555;
-	--color-border: #e5e5e5;
-	--color-input-border: #ccc;
-	--color-input-focus: #555;
-	--color-primary: #1a1a1a;
-	--color-primary-hover: #333;
-	--color-accent: #3b82f6;
-	--color-accent-hover: #2563eb;
-	--color-error: #c00;
+	--gray-0: #fff;
+	--gray-50: #faf8f5;
+	--gray-100: #f2efe9;
+	--gray-200: #e8e3db;
+	--gray-300: #cfc8bd;
+	--gray-400: #9a9185;
+	--gray-500: #5c5449;
+	--gray-600: #484238;
+	--gray-700: #3a352e;
+	--gray-800: #2d2924;
+	--gray-900: #1c1917;
+
+	--blue-300: #93c5fd;
+	--blue-400: #60a5fa;
+	--blue-500: #3b82f6;
+	--blue-600: #2563eb;
+
+	--red-400: #f66;
+	--red-500: #c00;
+
+	/* Warm accent — amber / terracotta */
+	--warm-400: #f59e0b;
+	--warm-500: #d97706;
+	--warm-600: #b45309;
+
+	/* ----------------------------------------------------------------------
+	   Semantic colors — Reference base palette above.
+	   Overridden per theme in blocks below.
+	   ---------------------------------------------------------------------- */
+	--color-bg: var(--gray-50);
+	--color-text: var(--gray-800);
+	--color-text-muted: var(--gray-500);
+	--color-border: var(--gray-200);
+	--color-input-border: var(--gray-300);
+	--color-input-focus: var(--gray-500);
+	--color-primary: var(--gray-800);
+	--color-primary-hover: var(--gray-700);
+	--color-accent: var(--warm-500);
+	--color-accent-hover: var(--warm-600);
+	--color-error: var(--red-500);
 
 	/* ----------------------------------------------------------------------
 	   Spacing — Consistent rhythm for margins, padding, and gaps.
@@ -36,7 +67,7 @@
 	   ---------------------------------------------------------------------- */
 	--font-sans: 'Outfit', system-ui, sans-serif;
 	--font-display: 'Zilla Slab', Georgia, serif;
-	--font-logo: 'Oi', cursive;
+	--font-logo: 'Tourney', sans-serif;
 
 	--font-size-root: 16px;
 	--line-height-base: 1.5;
@@ -51,6 +82,7 @@
 	--text-body-muted: 0.9rem;
 	--text-xl: 1.25rem;      /* 20px */
 	--text-2xl: 1.75rem;     /* 28px */
+	--text-logo: 1.75rem;    /* App title in header */
 
 	/* ----------------------------------------------------------------------
 	   Borders — Width and corner radii.
@@ -64,21 +96,35 @@
 	   Layout — Page and container constraints.
 	   ---------------------------------------------------------------------- */
 	--container-max-width: 48rem;
+
+	/* ----------------------------------------------------------------------
+	   Glass effect — for btn-primary (Apple-style frosted glass).
+	   ---------------------------------------------------------------------- */
+	--glass-bg: rgba(255, 255, 255, 0.35);
+	--glass-border: rgba(255, 255, 255, 0.5);
 }
 
-/* Dark theme — overrides color tokens from :root. */
+/* Dark theme — warm charcoal base, warm accent. */
 [data-theme='dark'] {
-	--color-bg: #121212;
-	--color-text: #e5e5e5;
-	--color-text-muted: #a0a0a0;
-	--color-border: #333;
-	--color-input-border: #444;
-	--color-input-focus: #888;
-	--color-primary: #e5e5e5;
-	--color-primary-hover: #fff;
-	--color-accent: #60a5fa;
-	--color-accent-hover: #93c5fd;
-	--color-error: #f66;
+	--color-bg: var(--gray-900);
+	--color-text: var(--gray-200);
+	--color-text-muted: var(--gray-400);
+	--color-border: var(--gray-700);
+	--color-input-border: var(--gray-600);
+	--color-input-focus: var(--gray-400);
+	--color-primary: var(--gray-200);
+	--color-primary-hover: var(--gray-0);
+	--color-accent: var(--warm-400);
+	--color-accent-hover: var(--warm-500);
+	--color-error: var(--red-400);
+	--glass-bg: rgba(255, 255, 255, 0.12);
+	--glass-border: rgba(255, 255, 255, 0.2);
+}
+
+[data-theme='dark'] button.btn-primary:hover {
+	background: rgba(255, 255, 255, 0.2);
+	border-color: rgba(255, 255, 255, 0.3);
+	color: var(--color-accent);
 }
 
 :root {
@@ -115,11 +161,25 @@ body {
 	border-bottom: var(--border-width) solid var(--color-border);
 }
 
+.header-brand {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-1);
+}
+
+.header-tagline {
+	margin: 0;
+	font-size: var(--text-body-muted);
+	color: var(--color-text-muted);
+	font-weight: normal;
+}
+
 .header-title {
 	margin: 0;
 	font-family: var(--font-logo);
-	font-size: var(--text-xl);
-	font-weight: var(--font-weight-normal);
+	font-size: var(--text-logo);
+	font-weight: 600;
+	font-style: italic;
 	letter-spacing: var(--letter-spacing-tight);
 }
 
@@ -128,7 +188,8 @@ body {
 	align-items: center;
 	gap: var(--space-2);
 	font-family: var(--font-logo);
-	font-weight: var(--font-weight-normal);
+	font-weight: 600;
+	font-style: italic;
 	color: inherit;
 	text-decoration: none;
 }
@@ -233,6 +294,36 @@ button.icon-only {
 	padding: var(--space-1-5);
 }
 
+/* Primary CTA — most prominent (e.g. Add movie). Apple-style frosted glass. */
+button.btn-primary {
+	background: var(--glass-bg);
+	-webkit-backdrop-filter: blur(12px);
+	backdrop-filter: blur(12px);
+	border: 1px solid var(--glass-border);
+	color: var(--color-accent);
+	padding: var(--space-3) var(--space-5);
+	font-size: var(--text-base);
+	border-radius: var(--radius-lg);
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+button.btn-primary:hover {
+	background: rgba(255, 255, 255, 0.5);
+	border-color: rgba(255, 255, 255, 0.6);
+	color: var(--color-accent);
+}
+
+/* Ghost / subdued — least prominent (e.g. delete icon). */
+button.btn-ghost {
+	background: transparent;
+	color: var(--color-text-muted);
+}
+
+button.btn-ghost:hover {
+	background: var(--color-border);
+	color: var(--color-error);
+}
+
 .add-item-row {
 	display: flex;
 	gap: var(--space-2);
@@ -259,8 +350,20 @@ ul li {
 	align-items: center;
 	justify-content: space-between;
 	gap: var(--space-3);
-	padding: var(--space-3) 0;
+	padding: var(--space-5) 0;
 	border-bottom: var(--border-width) solid var(--color-border);
+	font-size: var(--text-xl);
+}
+
+.item-content {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-1);
+}
+
+.item-added {
+	font-size: var(--text-body-muted);
+	color: var(--color-text-muted);
 }
 
 ul li:last-child {

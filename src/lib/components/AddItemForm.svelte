@@ -34,10 +34,9 @@
 	class="add-item-form"
 >
 	<label>
-		{label}
 		<div class="add-item-row">
-			<input type="text" name={fieldName} bind:value required />
-			<button>
+			<input type="text" name={fieldName} bind:value required placeholder={label} />
+			<button class="btn-primary">
 				<Plus size={18} style="vertical-align: -0.2em; margin-right: 0.25rem;" />
 				{buttonLabel}
 			</button>

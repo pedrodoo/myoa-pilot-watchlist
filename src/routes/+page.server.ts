@@ -1,5 +1,5 @@
 import { fail, redirect } from '@sveltejs/kit';
-import { and, eq } from 'drizzle-orm';
+import { and, desc, eq } from 'drizzle-orm';
 import type { Actions } from './$types';
 import type { PageServerLoad } from './$types';
 import { auth } from '$lib/server/auth';
@@ -14,7 +14,8 @@ export const load: PageServerLoad = async (event) => {
 	const movies = await db
 		.select()
 		.from(movie)
-		.where(eq(movie.userId, event.locals.user.id));
+		.where(eq(movie.userId, event.locals.user.id))
+		.orderBy(desc(movie.createdAt));
 	return { user: event.locals.user, movies };
 };
 

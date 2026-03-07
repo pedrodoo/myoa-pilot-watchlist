@@ -5,4 +5,5 @@
 export interface ViewItem {
 	id: string | number;
 	label: string;
+	addedAt?: string;
 }

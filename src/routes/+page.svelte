@@ -8,7 +8,11 @@
 	let { data, form }: { data: PageServerData; form: ActionData } = $props();
 
 	const items: ViewItem[] = $derived(
-		(data.movies ?? []).map((m) => ({ id: m.id, label: m.title }))
+		(data.movies ?? []).map((m) => ({
+			id: m.id,
+			label: m.title,
+			addedAt: m.createdAt ? new Date(m.createdAt).toISOString() : undefined
+		}))
 	);
 </script>
 
