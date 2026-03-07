@@ -5,6 +5,7 @@ import type { PageServerLoad } from './$types';
 import { auth } from '$lib/server/auth';
 import { db } from '$lib/server/db';
 import { movie } from '$lib/server/db/schema';
+import { strings } from '$lib/strings';
 
 export const load: PageServerLoad = async (event) => {
 	if (!event.locals.user) {
@@ -25,7 +26,7 @@ export const actions: Actions = {
 		const formData = await event.request.formData();
 		const title = formData.get('title')?.toString()?.trim();
 		if (!title) {
-			return fail(400, { message: 'Title is required' });
+			return fail(400, { message: strings.titleRequired });
 		}
 		await db.insert(movie).values({
 			userId: event.locals.user.id,
@@ -41,7 +42,7 @@ export const actions: Actions = {
 		const id = formData.get('id');
 		const parsed = typeof id === 'string' ? parseInt(id, 10) : NaN;
 		if (Number.isNaN(parsed) || parsed < 1) {
-			return fail(400, { message: 'Invalid movie' });
+			return fail(400, { message: strings.invalidMovie });
 		}
 		await db
 			.delete(movie)

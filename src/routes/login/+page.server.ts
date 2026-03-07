@@ -2,6 +2,7 @@ import { fail, redirect } from '@sveltejs/kit';
 import type { Actions } from './$types';
 import type { PageServerLoad } from './$types';
 import { auth } from '$lib/server/auth';
+import { strings } from '$lib/strings';
 import { APIError } from 'better-auth/api';
 
 export const load: PageServerLoad = async (event) => {
@@ -27,9 +28,9 @@ export const actions: Actions = {
 			});
 		} catch (error) {
 			if (error instanceof APIError) {
-				return fail(400, { message: error.message || 'Signin failed' });
+				return fail(400, { message: error.message || strings.signinFailed });
 			}
-			return fail(500, { message: 'Unexpected error' });
+			return fail(500, { message: strings.unexpectedError });
 		}
 
 		return redirect(302, '/');
@@ -51,9 +52,9 @@ export const actions: Actions = {
 			});
 		} catch (error) {
 			if (error instanceof APIError) {
-				return fail(400, { message: error.message || 'Registration failed' });
+				return fail(400, { message: error.message || strings.registrationFailed });
 			}
-			return fail(500, { message: 'Unexpected error' });
+			return fail(500, { message: strings.unexpectedError });
 		}
 
 		return redirect(302, '/');

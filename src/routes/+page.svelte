@@ -1,43 +1,25 @@
 <script lang="ts">
-	import { enhance } from '$app/forms';
+	import AddItemForm from '$lib/components/AddItemForm.svelte';
+	import ItemList from '$lib/components/ItemList.svelte';
+	import { strings } from '$lib/strings';
+	import type { ViewItem } from '$lib/types';
 	import type { PageServerData, ActionData } from './$types';
 
 	let { data, form }: { data: PageServerData; form: ActionData } = $props();
-	let title = $state('');
+
+	const items: ViewItem[] = $derived(
+		(data.movies ?? []).map((m) => ({ id: m.id, label: m.title }))
+	);
 </script>
 
-<h1>Watchlist</h1>
-
-<form method="post" action="?/addMovie" use:enhance={() => {
-	return async ({ result, update }) => {
-		await update();
-		if (result.type === 'success' || result.type === 'redirect') {
-			title = '';
-		}
-	};
-}}>
-	<label>
-		Title
-		<input type="text" name="title" bind:value={title} required />
-	</label>
-	<button>Add movie</button>
-</form>
+<AddItemForm
+	action="?/addMovie"
+	label={strings.title}
+	buttonLabel={strings.addMovie}
+	fieldName="title"
+/>
 {#if form?.message}
 	<p class="error">{form.message}</p>
 {/if}
 
-<ul>
-	{#each data.movies as m (m.id)}
-		<li>
-			{m.title}
-			<form method="post" action="?/deleteMovie" use:enhance style="display: inline;">
-				<input type="hidden" name="id" value={m.id} />
-				<button type="submit">Delete</button>
-			</form>
-		</li>
-	{/each}
-</ul>
-
-<form method="post" action="?/signOut" use:enhance>
-	<button>Sign out</button>
-</form>
+<ItemList {items} deleteAction="?/deleteMovie" itemIdParam="id" />
