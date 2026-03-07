@@ -28,7 +28,13 @@
 
 <ul>
 	{#each data.movies as m (m.id)}
-		<li>{m.title}</li>
+		<li>
+			{m.title}
+			<form method="post" action="?/deleteMovie" use:enhance style="display: inline;">
+				<input type="hidden" name="id" value={m.id} />
+				<button type="submit">Delete</button>
+			</form>
+		</li>
 	{/each}
 </ul>
 
