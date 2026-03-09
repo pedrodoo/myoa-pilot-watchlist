@@ -1,5 +1,5 @@
 <script lang="ts">
-	import AddItemForm from '$lib/components/AddItemForm.svelte';
+	import AddMovieSearch from '$lib/components/AddMovieSearch.svelte';
 	import ItemList from '$lib/components/ItemList.svelte';
 	import { strings } from '$lib/strings';
 	import type { ViewItem } from '$lib/types';
@@ -11,17 +11,13 @@
 		(data.movies ?? []).map((m) => ({
 			id: m.id,
 			label: m.title,
-			addedAt: m.createdAt ? new Date(m.createdAt).toISOString() : undefined
+			addedAt: m.createdAt ? new Date(m.createdAt).toISOString() : undefined,
+			posterUrl: m.posterPath ?? null
 		}))
 	);
 </script>
 
-<AddItemForm
-	action="?/addMovie"
-	label={strings.title}
-	buttonLabel={strings.addMovie}
-	fieldName="title"
-/>
+<AddMovieSearch />
 {#if form?.message}
 	<p class="error">{form.message}</p>
 {/if}

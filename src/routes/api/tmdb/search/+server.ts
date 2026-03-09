@@ -1,0 +1,36 @@
+import { json } from '@sveltejs/kit';
+import type { RequestHandler } from './$types';
+import { buildPosterUrl, searchMovies } from '$lib/server/tmdb';
+
+export const GET: RequestHandler = async (event) => {
+	if (!event.locals.user) {
+		return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+			status: 401,
+			headers: { 'Content-Type': 'application/json' }
+		});
+	}
+	const query = event.url.searchParams.get('query')?.trim();
+	if (!query) {
+		return new Response(JSON.stringify({ error: 'Missing query' }), {
+			status: 400,
+			headers: { 'Content-Type': 'application/json' }
+		});
+	}
+	try {
+		const results = await searchMovies(query);
+		const withPosterUrl = results.map((r) => ({
+			id: r.id,
+			title: r.title,
+			poster_path: r.poster_path,
+			posterUrl: buildPosterUrl(r.poster_path),
+			release_date: r.release_date
+		}));
+		return json({ results: withPosterUrl });
+	} catch (err) {
+		const message = err instanceof Error ? err.message : 'TMDB request failed';
+		return new Response(JSON.stringify({ error: message }), {
+			status: 502,
+			headers: { 'Content-Type': 'application/json' }
+		});
+	}
+};

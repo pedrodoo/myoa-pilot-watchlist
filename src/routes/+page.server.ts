@@ -29,9 +29,17 @@ export const actions: Actions = {
 		if (!title) {
 			return fail(400, { message: strings.titleRequired });
 		}
+		const tmdbIdRaw = formData.get('tmdbId');
+		const tmdbId =
+			tmdbIdRaw !== null && tmdbIdRaw !== ''
+				? parseInt(String(tmdbIdRaw), 10)
+				: null;
+		const posterPath = formData.get('poster_path')?.toString()?.trim() ?? null;
 		await db.insert(movie).values({
 			userId: event.locals.user.id,
-			title
+			title,
+			tmdbId: Number.isNaN(tmdbId) ? null : tmdbId,
+			posterPath: posterPath || null
 		});
 		return redirect(302, '/');
 	},

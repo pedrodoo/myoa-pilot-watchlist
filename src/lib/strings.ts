@@ -31,7 +31,13 @@ export const strings = {
 	title: 'Movie title',
 	addMovie: 'Add movie',
 	addItem: 'Add item',
+	searchMovie: 'Search for a movie',
+	search: 'Search',
+	searchResults: 'Search results',
+	noResults: 'No results',
 	deleteItemAriaPrefix: 'Delete ', // Prepended to item label for aria-label, e.g. "Delete Inception"
+	posterFor: 'Poster for ', // Prepended to title for img alt, e.g. "Poster for Inception"
+	noPoster: 'No poster',
 
 	/* -----------------------------------------------------------------------
 	   Error messages (shown after form submit)

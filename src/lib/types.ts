@@ -6,4 +6,5 @@ export interface ViewItem {
 	id: string | number;
 	label: string;
 	addedAt?: string;
+	posterUrl?: string | null;
 }
