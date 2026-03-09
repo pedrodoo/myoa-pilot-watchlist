@@ -105,8 +105,8 @@
 							<img
 								src={r.posterUrl ?? PLACEHOLDER_POSTER}
 								alt=""
-								width="50"
-								height="75"
+								width="100"
+								height="150"
 								class="result-poster"
 							/>
 							<span class="result-info">
@@ -136,9 +136,21 @@
 		list-style: none;
 		margin: var(--space-4) 0 0;
 		padding: 0;
-		display: flex;
-		flex-direction: column;
+		display: grid;
+		grid-template-rows: repeat(2, auto);
+		grid-auto-flow: column;
+		grid-auto-columns: 220px;
 		gap: var(--space-2);
+		overflow-x: auto;
+		overflow-y: hidden;
+		-webkit-overflow-scrolling: touch;
+	}
+	@media (max-width: 480px) {
+		.tmdb-results {
+			display: flex;
+			flex-direction: column;
+			overflow: visible;
+		}
 	}
 	.tmdb-results li {
 		border-bottom: none;
@@ -158,6 +170,7 @@
 		border: var(--border-width) solid var(--color-border);
 		border-radius: var(--radius-md);
 		background: var(--color-bg);
+		color: var(--color-text);
 		cursor: pointer;
 		font-size: var(--text-base);
 	}
@@ -165,8 +178,8 @@
 		background: var(--color-border);
 	}
 	.result-poster {
-		width: 50px;
-		height: 75px;
+		width: 100px;
+		height: 150px;
 		object-fit: cover;
 		border-radius: var(--radius-sm);
 		flex-shrink: 0;
