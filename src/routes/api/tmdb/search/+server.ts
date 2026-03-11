@@ -16,8 +16,10 @@ export const GET: RequestHandler = async (event) => {
 			headers: { 'Content-Type': 'application/json' }
 		});
 	}
+	const pageParam = event.url.searchParams.get('page');
+	const page = Math.max(1, parseInt(pageParam ?? '1', 10) || 1);
 	try {
-		const results = await searchMovies(query);
+		const { results, page: currentPage, total_pages } = await searchMovies(query, page);
 		const withPosterUrl = results.map((r) => ({
 			id: r.id,
 			title: r.title,
@@ -25,7 +27,7 @@ export const GET: RequestHandler = async (event) => {
 			posterUrl: buildPosterUrl(r.poster_path),
 			release_date: r.release_date
 		}));
-		return json({ results: withPosterUrl });
+		return json({ results: withPosterUrl, page: currentPage, total_pages });
 	} catch (err) {
 		const message = err instanceof Error ? err.message : 'TMDB request failed';
 		return new Response(JSON.stringify({ error: message }), {

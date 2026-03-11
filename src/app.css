@@ -225,6 +225,10 @@ body {
 	background: var(--color-border);
 }
 
+.header-nav a.theme-toggle {
+	text-decoration: none;
+}
+
 h1 {
 	font-family: var(--font-display);
 	font-size: var(--text-2xl);

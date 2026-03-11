@@ -1,12 +1,19 @@
 <script lang="ts">
+	import { setContext } from 'svelte';
 	import { enhance } from '$app/forms';
 	import '../app.css';
 	import favicon from '$lib/assets/favicon.svg';
-	import { Sun, Moon, LogOut, Popcorn } from '@lucide/svelte';
+	import LoginModal from '$lib/components/LoginModal.svelte';
+	import { Sun, Moon, LogOut, LogIn, Popcorn } from '@lucide/svelte';
 	import { strings } from '$lib/strings';
 	import type { LayoutData } from './$types';
 
 	let { data, children }: { data: LayoutData; children: import('svelte').Snippet } = $props();
+	let showLoginModal = $state(false);
+
+	setContext('openLoginModal', () => {
+		showLoginModal = true;
+	});
 
 	function toggleTheme() {
 		const html = document.documentElement;
@@ -62,7 +69,16 @@
 				<Sun size={18} />
 			{/if}
 		</button>
-		{#if data.user}
+		{#if !data.user}
+			<button
+				type="button"
+				class="theme-toggle"
+				aria-label={strings.loginOrSignUp}
+				onclick={() => (showLoginModal = true)}
+			>
+				<LogIn size={18} />
+			</button>
+		{:else}
 			<span class="header-user">{data.user.name || data.user.email}</span>
 			<form method="post" action="?/signOut" use:enhance class="inline">
 				<button type="submit" class="icon" aria-label={strings.signOut}>
@@ -73,6 +89,10 @@
 		{/if}
 	</div>
 </header>
+
+{#if !data.user}
+	<LoginModal bind:open={showLoginModal} />
+{/if}
 
 <main class="page">
 	{@render children()}

@@ -12,6 +12,14 @@ export interface TmdbMovieResult {
 
 export interface TmdbSearchResponse {
 	results: TmdbMovieResult[];
+	page?: number;
+	total_pages?: number;
+}
+
+export interface TmdbTopRatedResponse {
+	results: TmdbMovieResult[];
+	page: number;
+	total_pages: number;
 }
 
 /**
@@ -24,14 +32,19 @@ export function buildPosterUrl(posterPath: string | null): string | null {
 
 /**
  * Search TMDB by movie title. Requires TMDB_API_KEY in env.
+ * Returns results, page, and total_pages for pagination.
  */
-export async function searchMovies(query: string): Promise<TmdbMovieResult[]> {
+export async function searchMovies(
+	query: string,
+	page = 1
+): Promise<{ results: TmdbMovieResult[]; page: number; total_pages: number }> {
 	const key = env.TMDB_API_KEY;
 	if (!key?.trim()) {
 		throw new Error('TMDB_API_KEY is not set');
 	}
 	const url = new URL(TMDB_BASE + '/search/movie');
 	url.searchParams.set('query', query.trim());
+	url.searchParams.set('page', String(page));
 	const res = await fetch(url.toString(), {
 		headers: {
 			Authorization: `Bearer ${key}`
@@ -41,5 +54,38 @@ export async function searchMovies(query: string): Promise<TmdbMovieResult[]> {
 		throw new Error(`TMDB API error: ${res.status}`);
 	}
 	const data = (await res.json()) as TmdbSearchResponse;
-	return data.results ?? [];
+	return {
+		results: data.results ?? [],
+		page: data.page ?? page,
+		total_pages: data.total_pages ?? 1
+	};
+}
+
+/**
+ * Get top-rated movies from TMDB. Requires TMDB_API_KEY in env.
+ * Returns results, page, and total_pages for pagination.
+ */
+export async function getTopRatedMovies(
+	page = 1
+): Promise<{ results: TmdbMovieResult[]; page: number; total_pages: number }> {
+	const key = env.TMDB_API_KEY;
+	if (!key?.trim()) {
+		throw new Error('TMDB_API_KEY is not set');
+	}
+	const url = new URL(TMDB_BASE + '/movie/top_rated');
+	url.searchParams.set('page', String(page));
+	const res = await fetch(url.toString(), {
+		headers: {
+			Authorization: `Bearer ${key}`
+		}
+	});
+	if (!res.ok) {
+		throw new Error(`TMDB API error: ${res.status}`);
+	}
+	const data = (await res.json()) as TmdbTopRatedResponse;
+	return {
+		results: data.results ?? [],
+		page: data.page ?? page,
+		total_pages: data.total_pages ?? 1
+	};
 }

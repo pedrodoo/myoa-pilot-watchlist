@@ -12,7 +12,8 @@
 			id: m.id,
 			label: m.title,
 			addedAt: m.createdAt ? new Date(m.createdAt).toISOString() : undefined,
-			posterUrl: m.posterPath ?? null
+			posterUrl: m.posterPath ?? null,
+			status: m.status ?? 'want_to_watch'
 		}))
 	);
 </script>
@@ -22,4 +23,9 @@
 	<p class="error">{form.message}</p>
 {/if}
 
-<ItemList {items} deleteAction="?/deleteMovie" itemIdParam="id" />
+<ItemList
+		{items}
+		deleteAction="?/deleteMovie"
+		toggleStatusAction="?/toggleMovieStatus"
+		itemIdParam="id"
+	/>

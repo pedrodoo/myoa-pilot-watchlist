@@ -58,6 +58,31 @@ export const actions: Actions = {
 			.where(and(eq(movie.id, parsed), eq(movie.userId, event.locals.user!.id)));
 		return redirect(302, '/');
 	},
+	toggleMovieStatus: async (event) => {
+		if (!event.locals.user) {
+			return redirect(302, '/login');
+		}
+		const formData = await event.request.formData();
+		const id = formData.get('id');
+		const parsed = typeof id === 'string' ? parseInt(id, 10) : NaN;
+		if (Number.isNaN(parsed) || parsed < 1) {
+			return fail(400, { message: strings.invalidMovie });
+		}
+		const [row] = await db
+			.select({ status: movie.status })
+			.from(movie)
+			.where(and(eq(movie.id, parsed), eq(movie.userId, event.locals.user!.id)))
+			.limit(1);
+		if (!row) {
+			return fail(404, { message: strings.invalidMovie });
+		}
+		const nextStatus = row.status === 'want_to_watch' ? 'watched' : 'want_to_watch';
+		await db
+			.update(movie)
+			.set({ status: nextStatus })
+			.where(and(eq(movie.id, parsed), eq(movie.userId, event.locals.user!.id)));
+		return redirect(302, '/');
+	},
 	signOut: async (event) => {
 		await auth.api.signOut({
 			headers: event.request.headers

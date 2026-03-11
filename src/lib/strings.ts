@@ -7,7 +7,7 @@ export const strings = {
 	   App
 	   ----------------------------------------------------------------------- */
 	appTitle: 'Watchlist-O',
-	appTagline: "Track movies you want to watch. Don't forget the popcorn.",
+	appTagline: "Track your movies and TV shows. Popcorn not included.",
 
 	/* -----------------------------------------------------------------------
 	   Theme
@@ -19,11 +19,13 @@ export const strings = {
 	   Auth
 	   ----------------------------------------------------------------------- */
 	signOut: 'Sign out',
+	loginOrSignUp: 'Login or sign up',
 	login: 'Login',
 	register: 'Register',
 	email: 'Email',
 	password: 'Password',
 	nameForRegistration: 'Your screenname',
+	topRatedMovies: 'Top rated movies',
 
 	/* -----------------------------------------------------------------------
 	   Watchlist / movies
@@ -38,6 +40,8 @@ export const strings = {
 	deleteItemAriaPrefix: 'Delete ', // Prepended to item label for aria-label, e.g. "Delete Inception"
 	posterFor: 'Poster for ', // Prepended to title for img alt, e.g. "Poster for Inception"
 	noPoster: 'No poster',
+	markAsWatched: 'Mark as watched',
+	markAsWantToWatch: 'Mark as want to watch',
 
 	/* -----------------------------------------------------------------------
 	   Error messages (shown after form submit)

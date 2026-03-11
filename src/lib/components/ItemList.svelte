@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import { Trash2 } from '@lucide/svelte';
+	import { Eye, Trash2, Tv } from '@lucide/svelte';
 	import { formatRelativeTime } from '$lib/relative-time';
 	import { strings } from '$lib/strings';
 	import type { ViewItem } from '$lib/types';
@@ -10,15 +10,16 @@
 	interface Props {
 		items: ViewItem[];
 		deleteAction: string;
+		toggleStatusAction?: string;
 		itemIdParam?: string;
 	}
 
-	let { items, deleteAction, itemIdParam = 'id' }: Props = $props();
+	let { items, deleteAction, toggleStatusAction, itemIdParam = 'id' }: Props = $props();
 </script>
 
 <ul>
 	{#each items as item (item.id)}
-		<li>
+		<li class:item-watched={item.status === 'watched'}>
 			<div class="item-main">
 				<div class="item-poster">
 					{#if item.posterUrl}
@@ -47,7 +48,25 @@
 					{/if}
 				</div>
 				<div class="item-content">
-					<span>{item.label}</span>
+					<span class="item-title-row">
+						<span>{item.label}</span>
+						{#if toggleStatusAction}
+							<form method="post" action={toggleStatusAction} use:enhance class="inline">
+								<input type="hidden" name={itemIdParam} value={item.id} />
+								<button
+									type="submit"
+									class="icon icon-only btn-ghost"
+									aria-label={item.status === 'watched' ? strings.markAsWantToWatch : strings.markAsWatched}
+								>
+									{#if item.status === 'watched'}
+										<Tv size={16} />
+									{:else}
+										<Eye size={16} />
+									{/if}
+								</button>
+							</form>
+						{/if}
+					</span>
 					{#if item.addedAt}
 						<span class="item-added">{formatRelativeTime(item.addedAt)}</span>
 					{/if}
@@ -64,6 +83,14 @@
 </ul>
 
 <style>
+	.item-watched {
+		opacity: 0.85;
+	}
+	.item-title-row {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--space-2);
+	}
 	.item-poster {
 		flex-shrink: 0;
 	}
