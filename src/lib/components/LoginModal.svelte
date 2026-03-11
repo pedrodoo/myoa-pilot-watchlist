@@ -11,9 +11,6 @@
 	let forceClosed = $state(false);
 
 	$effect(() => {
-		// #region agent log
-		fetch('http://127.0.0.1:7484/ingest/74056abd-fecd-436c-9573-3f0ff2acc70e',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'02b525'},body:JSON.stringify({sessionId:'02b525',location:'LoginModal.svelte:$effect',message:'effect',data:{hasDialogEl:!!dialogEl,open},hypothesisId:'effect',timestamp:Date.now()})}).catch(()=>{});
-		// #endregion
 		if (!dialogEl) return;
 		if (open) {
 			forceClosed = false;
@@ -27,10 +24,14 @@
 		open = false;
 	}
 
-	function handleSubmit(): import('$app/forms').SubmitFunction {
-		return async ({ result }) => {
+	function handleSubmit() {
+		return async ({
+			result
+		}: {
+			result: { type: string; location?: string; data?: { message?: unknown } };
+		}) => {
 			formMessage = '';
-			if (result.type === 'redirect') {
+			if (result.type === 'redirect' && result.location) {
 				open = false;
 				await goto(result.location);
 				return;
@@ -59,9 +60,6 @@
 					class="login-modal-close"
 					aria-label="Close"
 					onclick={() => {
-						// #region agent log
-						fetch('http://127.0.0.1:7484/ingest/74056abd-fecd-436c-9573-3f0ff2acc70e',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'02b525'},body:JSON.stringify({sessionId:'02b525',location:'LoginModal.svelte:close click',message:'close clicked',data:{openBefore:open},hypothesisId:'click',timestamp:Date.now()})}).catch(()=>{});
-						// #endregion
 						forceClosed = true;
 						open = false;
 						dialogEl?.close();

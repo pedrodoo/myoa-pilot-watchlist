@@ -35,11 +35,21 @@ export const actions: Actions = {
 				? parseInt(String(tmdbIdRaw), 10)
 				: null;
 		const posterPath = formData.get('poster_path')?.toString()?.trim() ?? null;
+		const tmdbRatingRaw = formData.get('tmdb_rating');
+		const voteAverage =
+			tmdbRatingRaw !== null && tmdbRatingRaw !== ''
+				? parseFloat(String(tmdbRatingRaw))
+				: NaN;
+		const rating =
+			Number.isFinite(voteAverage) && voteAverage >= 0 && voteAverage <= 10
+				? Math.min(5, Math.max(1, Math.round(voteAverage / 2)))
+				: null;
 		await db.insert(movie).values({
 			userId: event.locals.user.id,
 			title,
 			tmdbId: Number.isNaN(tmdbId) ? null : tmdbId,
-			posterPath: posterPath || null
+			posterPath: posterPath || null,
+			rating
 		});
 		return redirect(302, '/');
 	},
@@ -81,7 +91,31 @@ export const actions: Actions = {
 			.update(movie)
 			.set({ status: nextStatus })
 			.where(and(eq(movie.id, parsed), eq(movie.userId, event.locals.user!.id)));
-		return redirect(302, '/');
+		return {};
+	},
+	setMovieRating: async (event) => {
+		if (!event.locals.user) {
+			return redirect(302, '/login');
+		}
+		const formData = await event.request.formData();
+		const id = formData.get('id');
+		const parsed = typeof id === 'string' ? parseInt(id, 10) : NaN;
+		if (Number.isNaN(parsed) || parsed < 1) {
+			return fail(400, { message: strings.invalidMovie });
+		}
+		const ratingRaw = formData.get('rating');
+		const rating =
+			ratingRaw !== null && ratingRaw !== ''
+				? parseInt(String(ratingRaw), 10)
+				: NaN;
+		if (!Number.isFinite(rating) || rating < 1 || rating > 5) {
+			return fail(400, { message: strings.invalidMovie });
+		}
+		await db
+			.update(movie)
+			.set({ rating })
+			.where(and(eq(movie.id, parsed), eq(movie.userId, event.locals.user!.id)));
+		return {};
 	},
 	signOut: async (event) => {
 		await auth.api.signOut({

@@ -12,6 +12,8 @@
 		release_date: string | null;
 	};
 
+	type MoviePosterRowRef = { scrollBy: (delta: number) => void };
+
 	let { data }: { data: PageData } = $props();
 	const openLoginModal = getContext<() => void>('openLoginModal');
 
@@ -20,7 +22,7 @@
 	let totalPages = $state(1);
 	let hasLoadedMore = $state(false);
 	let loadingMore = $state(false);
-	let moviePosterRowRef = $state<InstanceType<typeof MoviePosterRow> | null>(null);
+	let moviePosterRowRef = $state<MoviePosterRowRef | null>(null);
 
 	$effect.pre(() => {
 		if (hasLoadedMore) return;

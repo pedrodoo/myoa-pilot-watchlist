@@ -12,6 +12,8 @@
 		poster_path: string | null;
 		posterUrl: string | null;
 		release_date: string | null;
+		vote_average?: number;
+		vote_count?: number;
 	}
 
 	let query = $state('');
@@ -164,6 +166,9 @@
 						<input type="hidden" name="tmdbId" value={r.id} />
 						{#if r.posterUrl}
 							<input type="hidden" name="poster_path" value={r.posterUrl} />
+						{/if}
+						{#if r.vote_average != null}
+							<input type="hidden" name="tmdb_rating" value={r.vote_average} />
 						{/if}
 						<button type="submit" class="result-button">
 							<img

@@ -10,4 +10,6 @@ export interface ViewItem {
 	addedAt?: string;
 	posterUrl?: string | null;
 	status?: WatchStatus;
+	rating?: number;
+	tmdbId?: number | null;
 }

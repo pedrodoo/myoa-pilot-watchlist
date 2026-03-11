@@ -25,7 +25,9 @@ export const GET: RequestHandler = async (event) => {
 			title: r.title,
 			poster_path: r.poster_path,
 			posterUrl: buildPosterUrl(r.poster_path),
-			release_date: r.release_date
+			release_date: r.release_date,
+			vote_average: r.vote_average,
+			vote_count: r.vote_count
 		}));
 		return json({ results: withPosterUrl, page: currentPage, total_pages });
 	} catch (err) {
