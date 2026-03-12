@@ -146,6 +146,64 @@ export async function getNowPlayingMovies(
 }
 
 /**
+ * Get popular movies from TMDB. Requires TMDB_API_KEY in env.
+ * Returns results, page, and total_pages for pagination.
+ */
+export async function getPopularMovies(
+	page = 1
+): Promise<{ results: TmdbMovieResult[]; page: number; total_pages: number }> {
+	const key = env.TMDB_API_KEY;
+	if (!key?.trim()) {
+		throw new Error('TMDB_API_KEY is not set');
+	}
+	const url = new URL(TMDB_BASE + '/movie/popular');
+	url.searchParams.set('page', String(page));
+	const res = await fetch(url.toString(), {
+		headers: {
+			Authorization: `Bearer ${key}`
+		}
+	});
+	if (!res.ok) {
+		throw new Error(`TMDB API error: ${res.status}`);
+	}
+	const data = (await res.json()) as TmdbTopRatedResponse;
+	return {
+		results: data.results ?? [],
+		page: data.page ?? page,
+		total_pages: data.total_pages ?? 1
+	};
+}
+
+/**
+ * Get upcoming movies from TMDB. Requires TMDB_API_KEY in env.
+ * Returns results, page, and total_pages for pagination.
+ */
+export async function getUpcomingMovies(
+	page = 1
+): Promise<{ results: TmdbMovieResult[]; page: number; total_pages: number }> {
+	const key = env.TMDB_API_KEY;
+	if (!key?.trim()) {
+		throw new Error('TMDB_API_KEY is not set');
+	}
+	const url = new URL(TMDB_BASE + '/movie/upcoming');
+	url.searchParams.set('page', String(page));
+	const res = await fetch(url.toString(), {
+		headers: {
+			Authorization: `Bearer ${key}`
+		}
+	});
+	if (!res.ok) {
+		throw new Error(`TMDB API error: ${res.status}`);
+	}
+	const data = (await res.json()) as TmdbTopRatedResponse;
+	return {
+		results: data.results ?? [],
+		page: data.page ?? page,
+		total_pages: data.total_pages ?? 1
+	};
+}
+
+/**
  * Get full movie details from TMDB by movie ID. Returns null if key missing or request fails.
  */
 export async function getMovieDetails(tmdbId: number): Promise<TmdbMovieDetails | null> {

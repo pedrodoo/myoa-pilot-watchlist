@@ -27,6 +27,8 @@ export const strings = {
 	nameForRegistration: 'Your screenname',
 	topRatedMovies: 'Top rated movies',
 	nowPlayingMovies: 'Now playing',
+	popularMovies: 'Popular',
+	upcomingMovies: 'Upcoming',
 
 	/* -----------------------------------------------------------------------
 	   Watchlist / movies

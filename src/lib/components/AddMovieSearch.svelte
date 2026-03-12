@@ -22,6 +22,14 @@
 		vote_count?: number;
 	}
 
+	type ListType = 'top_rated' | 'now_playing' | 'popular' | 'upcoming';
+
+	const LIST_OPTIONS: { type: ListType; label: string; ariaLabel: string }[] = [
+		{ type: 'top_rated', label: strings.topRatedMovies, ariaLabel: 'Load top rated movies' },
+		{ type: 'now_playing', label: strings.nowPlayingMovies, ariaLabel: 'Load now playing movies' },
+		{ type: 'upcoming', label: strings.upcomingMovies, ariaLabel: 'Load upcoming movies' }
+	];
+
 	let query = $state('');
 	let results = $state<TmdbResult[]>([]);
 	let loading = $state(false);
@@ -31,10 +39,12 @@
 	let listEl = $state<HTMLUListElement | null>(null);
 	let scrollLeft = $state(0);
 	let loadingMore = $state(false);
+	let activeList = $state<ListType | null>(null);
 
 	async function doSearch() {
 		const q = query.trim();
 		if (!q) return;
+		activeList = null;
 		loading = true;
 		error = null;
 		results = [];
@@ -55,9 +65,52 @@
 		}
 	}
 
+	async function loadList(type: ListType, page = 1) {
+		activeList = type;
+		query = '';
+		if (page === 1) {
+			loading = true;
+			error = null;
+			results = [];
+		} else {
+			loadingMore = true;
+		}
+		try {
+			const res = await fetch(`/api/tmdb/list/${type}?page=${page}`);
+			const data = await res.json();
+			if (!res.ok) {
+				error = data.error ?? 'Failed to load list';
+				return;
+			}
+			const next = (data.results ?? []) as TmdbResult[];
+			if (page === 1) {
+				results = next;
+				searchPage = data.page ?? 1;
+				searchTotalPages = data.total_pages ?? 1;
+			} else {
+				results = [...results, ...next];
+				searchPage = data.page ?? searchPage + 1;
+				searchTotalPages = data.total_pages ?? searchTotalPages;
+				await tick();
+				const viewportWidth = listEl?.parentElement?.clientWidth ?? 0;
+				listEl?.scrollTo({ left: (listEl?.scrollLeft ?? 0) + viewportWidth, behavior: 'smooth' });
+			}
+		} catch (e) {
+			error = e instanceof Error ? e.message : 'Failed to load list';
+		} finally {
+			loading = false;
+			loadingMore = false;
+		}
+	}
+
 	async function loadMore() {
+		if (loadingMore || searchPage >= searchTotalPages || !listEl) return;
+		if (activeList) {
+			await loadList(activeList, searchPage + 1);
+			return;
+		}
 		const q = query.trim();
-		if (!q || loadingMore || searchPage >= searchTotalPages || !listEl) return;
+		if (!q) return;
 		loadingMore = true;
 		try {
 			const res = await fetch(
@@ -98,20 +151,36 @@
 			doSearch();
 		}}
 	>
-		<label>
-			<div class="add-item-row">
+		<div role="group" aria-label="Search or browse movies">
+			<div class="add-item-row add-item-row-with-chips">
+				<div class="tmdb-list-chips">
+					{#each LIST_OPTIONS as opt}
+						<button
+							type="button"
+							class="chip"
+							class:active={activeList === opt.type}
+							aria-pressed={activeList === opt.type}
+							aria-label={opt.ariaLabel}
+							disabled={loading}
+							onclick={() => loadList(opt.type)}
+						>
+							{opt.label}
+						</button>
+					{/each}
+				</div>
 				<input
 					type="text"
+					class="search-input"
 					bind:value={query}
 					placeholder={strings.searchMovie}
 					disabled={loading}
 				/>
-				<button type="submit" class="btn-primary" disabled={loading}>
-					<Search size={18} style="vertical-align: -0.2em; margin-right: 0.25rem;" />
+				<button type="submit" class="btn-primary search-submit" disabled={loading}>
+					<Search size={18} />
 					{strings.search}
 				</button>
 			</div>
-		</label>
+		</div>
 	</form>
 
 	{#if error}
@@ -120,7 +189,7 @@
 
 	{#if loading}
 		<p class="search-status">{strings.searchResults}…</p>
-	{:else if results.length === 0 && query.trim() !== '' && !error}
+	{:else if results.length === 0 && (query.trim() !== '' || activeList) && !error}
 		<p class="search-status">{strings.noResults}</p>
 	{:else if results.length > 0}
 		<div class="tmdb-results-bleed">
@@ -163,6 +232,7 @@
 								if (result.type === 'success' || result.type === 'redirect') {
 									results = [];
 									query = '';
+									activeList = null;
 								}
 							};
 						}}
@@ -202,6 +272,56 @@
 <style>
 	.add-movie-search {
 		margin-bottom: var(--space-8);
+	}
+	.tmdb-list-chips {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--space-2);
+		align-items: center;
+		flex-shrink: 0;
+	}
+	.chip {
+		padding: var(--space-1) var(--space-3);
+		font-size: var(--text-body-muted);
+		border: var(--border-width) solid var(--color-border);
+		border-radius: var(--radius-md);
+		background: var(--color-bg);
+		color: var(--color-text);
+		cursor: pointer;
+		white-space: nowrap;
+	}
+	.chip:hover:not(:disabled) {
+		background: var(--color-border);
+	}
+	.chip.active {
+		background: var(--color-border);
+		font-weight: var(--font-weight-medium);
+	}
+	.chip:disabled {
+		opacity: 0.6;
+		cursor: not-allowed;
+	}
+	.add-item-row-with-chips {
+		flex-wrap: wrap;
+		min-height: var(--search-row-height, 2.5rem);
+		align-items: stretch;
+	}
+	.add-item-row-with-chips .chip,
+	.add-item-row-with-chips .search-input,
+	.add-item-row-with-chips button {
+		height: var(--search-row-height, 2.5rem);
+		min-height: var(--search-row-height, 2.5rem);
+		box-sizing: border-box;
+	}
+	.search-input {
+		flex: 1;
+		min-width: 14rem;
+	}
+	.search-submit {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		gap: var(--space-2);
 	}
 	.search-status {
 		font-size: var(--text-body-muted);
@@ -313,9 +433,9 @@
 	}
 	.result-title {
 		font-weight: var(--font-weight-medium);
-		overflow: hidden;
-		text-overflow: ellipsis;
-		white-space: nowrap;
+		white-space: normal;
+		word-wrap: break-word;
+		overflow-wrap: break-word;
 	}
 	.result-year {
 		font-size: var(--text-body-muted);

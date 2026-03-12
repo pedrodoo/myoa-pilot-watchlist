@@ -268,7 +268,7 @@
 	.movie-detail-title {
 		margin: 0;
 		font-family: var(--font-display);
-		font-size: var(--text-xl);
+		font-size: var(--text-2xl);
 		font-weight: var(--font-weight-semibold);
 		color: var(--color-text);
 		line-height: 1.2;
