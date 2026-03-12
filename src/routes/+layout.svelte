@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { setContext } from 'svelte';
+	import { page } from '$app/stores';
 	import { enhance } from '$app/forms';
 	import '../app.css';
 	import favicon from '$lib/assets/favicon.svg';
@@ -46,16 +47,17 @@
 	<link rel="icon" href={favicon} />
 </svelte:head>
 
-<header class="header">
-	<div class="header-brand">
-		<h1 class="header-title">
-			<a href="/">
-				<Popcorn size={24} />
-				{strings.appTitle}
-			</a>
-		</h1>
-		<span class="header-tagline">{strings.appTagline}</span>
-	</div>
+<header class="header" class:header-login={$page.url.pathname === '/login'}>
+	{#if $page.url.pathname !== '/login'}
+		<div class="header-brand">
+			<h1 class="header-title">
+				<a href="/">
+					<Popcorn size={24} />
+					{strings.appTitle}
+				</a>
+			</h1>
+		</div>
+	{/if}
 	<div class="header-nav">
 		<button
 			type="button"
@@ -94,6 +96,6 @@
 	<LoginModal bind:open={showLoginModal} />
 {/if}
 
-<main class="page">
+<main class="page" class:page-login={$page.url.pathname === '/login'}>
 	{@render children()}
 </main>

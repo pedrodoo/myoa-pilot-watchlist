@@ -5,6 +5,12 @@
 	import { strings } from '$lib/strings';
 
 	const PLACEHOLDER_POSTER = '/placeholder-poster.svg';
+	const MAX_TITLE_CHARS = 28;
+
+	function truncateTitle(title: string, maxLen: number): string {
+		if (title.length <= maxLen) return title;
+		return title.slice(0, maxLen) + '…';
+	}
 
 	interface TmdbResult {
 		id: number;
@@ -179,7 +185,7 @@
 								class="result-poster"
 							/>
 							<span class="result-info">
-								<span class="result-title">{r.title}</span>
+								<span class="result-title" title={r.title}>{truncateTitle(r.title, MAX_TITLE_CHARS)}</span>
 								{#if getYear(r.release_date)}
 									<span class="result-year">{getYear(r.release_date)}</span>
 								{/if}
@@ -307,6 +313,9 @@
 	}
 	.result-title {
 		font-weight: var(--font-weight-medium);
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
 	}
 	.result-year {
 		font-size: var(--text-body-muted);

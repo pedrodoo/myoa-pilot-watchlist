@@ -172,6 +172,10 @@
 		overflow-x: auto;
 		overflow-y: visible;
 		-webkit-overflow-scrolling: touch;
+		scrollbar-width: none;
+	}
+	.movie-row-list::-webkit-scrollbar {
+		display: none;
 	}
 	@media (max-width: 480px) {
 		.movie-row-list {

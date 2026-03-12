@@ -83,6 +83,8 @@
 	--text-xl: 1.25rem;      /* 20px */
 	--text-2xl: 1.75rem;     /* 28px */
 	--text-logo: 1.75rem;    /* App title in header */
+	--text-hero-title: 2.75rem;   /* Login page hero app name */
+	--text-hero-tagline: 1.375rem; /* Login page hero subtitle */
 
 	/* ----------------------------------------------------------------------
 	   Borders — Width and corner radii.
@@ -150,6 +152,11 @@ body {
 	padding: var(--space-8) var(--space-6);
 }
 
+.page-login {
+	padding-top: 0;
+	max-width: none;
+}
+
 .header {
 	display: flex;
 	align-items: center;
@@ -159,6 +166,19 @@ body {
 	max-width: var(--container-max-width);
 	margin: 0 auto;
 	border-bottom: var(--border-width) solid var(--color-border);
+}
+
+.header-login {
+	position: fixed;
+	top: 0;
+	right: 0;
+	left: auto;
+	width: auto;
+	max-width: none;
+	margin: 0;
+	padding: var(--space-4) var(--space-6);
+	border-bottom: none;
+	z-index: 10;
 }
 
 .header-brand {

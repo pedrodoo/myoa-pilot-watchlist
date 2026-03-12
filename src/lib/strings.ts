@@ -26,6 +26,7 @@ export const strings = {
 	password: 'Password',
 	nameForRegistration: 'Your screenname',
 	topRatedMovies: 'Top rated movies',
+	nowPlayingMovies: 'Now playing',
 
 	/* -----------------------------------------------------------------------
 	   Watchlist / movies

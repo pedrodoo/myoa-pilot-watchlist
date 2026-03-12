@@ -2,7 +2,7 @@ import { fail, redirect } from '@sveltejs/kit';
 import type { Actions } from './$types';
 import type { PageServerLoad } from './$types';
 import { auth } from '$lib/server/auth';
-import { buildPosterUrl, getTopRatedMovies } from '$lib/server/tmdb';
+import { buildPosterUrl, getNowPlayingMovies, getTopRatedMovies } from '$lib/server/tmdb';
 import { strings } from '$lib/strings';
 import { APIError } from 'better-auth/api';
 
@@ -26,7 +26,30 @@ export const load: PageServerLoad = async (event) => {
 	} catch {
 		// Page still works without TMDB data
 	}
-	return { topRatedMovies, topRatedPage, topRatedTotalPages };
+	let nowPlayingMovies: { id: number; title: string; posterUrl: string | null; release_date: string | null }[] = [];
+	let nowPlayingPage = 1;
+	let nowPlayingTotalPages = 1;
+	try {
+		const { results, page, total_pages } = await getNowPlayingMovies(1);
+		nowPlayingMovies = results.map((r) => ({
+			id: r.id,
+			title: r.title,
+			posterUrl: buildPosterUrl(r.poster_path),
+			release_date: r.release_date
+		}));
+		nowPlayingPage = page;
+		nowPlayingTotalPages = total_pages;
+	} catch {
+		// Page still works without TMDB data
+	}
+	return {
+		topRatedMovies,
+		topRatedPage,
+		topRatedTotalPages,
+		nowPlayingMovies,
+		nowPlayingPage,
+		nowPlayingTotalPages
+	};
 };
 
 export const actions: Actions = {
